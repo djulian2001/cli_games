@@ -9,11 +9,36 @@ from app.card import Card
 from app.player import Player
 
 class Test_Unittest(unittest.TestCase):
+  
+  # Unittest general 
+  def setUp(self):
+    """If there was required actions to set the running enviornment for the app"""
+    pass
+  def tearDown(self):
+    """If there was a required clean up."""
+    pass
   def test_assert(self):
     assert True
   def test_assertFalse(self):
     self.assertFalse(False)
 
+  # SEEDING for REUSE:
+  def seed_a_card_game(self):
+    cg_card_game_rules ={
+      "game_rules":[(1,"rule 1",5)],
+      "deck_rules":{
+        "main":{
+          "suit_rules":[(1,"spades","black"),(2,"hearts","red")],
+          "card_rules":[(1,"ace",1),(2,"king",1),(3,"queen",1)] 
+        }, }, }
+
+    return Card_Game(
+      name='adding',
+      description='add players',
+      players=['Teddy','Ruxin'],
+      card_game_rules=cg_card_game_rules )
+
+  # APPLICATION TESTS:
   def test_game_interface(self):
     g = Game(
       name='my_game',
@@ -78,27 +103,44 @@ class Test_Unittest(unittest.TestCase):
     self.assertIsInstance( cg.pot, list )
 
   def test_card_game_add_to_pot(self):
-    cg_card_game_rules ={
-      "game_rules":[(1,"rule 1",5)],
-      "deck_rules":{
-        "main":{
-          "suit_rules":[(1,"spades","black"),(2,"hearts","red")],
-          "card_rules":[(1,"ace",1),(2,"king",1),(3,"queen",1)] 
-        }, }, }
-
-    cg = Card_Game(
-      name='adding',
-      description='add players',
-      players=['Teddy','Ruxin'],
-      card_game_rules=cg_card_game_rules )
+    cg = self.seed_a_card_game()
     card_count = len(cg.decks['main'].cards)
-
-    for card in cg.decks['main'].cards:
-      cg.pot.append(cg.decks['main'].cards.pop(card))
+    for i in range( card_count ):
+      cg.pot.append( cg.decks['main'].cards.pop(0) )
 
     self.assertEqual(len(cg.pot),card_count)
 
-  def test_card_game_interface_get_decks(self):
+  def test_card_game_method_take_pot(self):
+    cg = self.seed_a_card_game()
+    for i in range(len(cg.decks['main'].cards)-3):
+      cg.pot.append( cg.decks['main'].cards.pop() )
+    player = cg.get_player_by_name('Ruxin')
+    cg.player_takes_pot( player )
+    pot_cards = copy.deepcopy( cg.pot )
+    self.assertEqual( len(cg.pot),0 )
+    self.assertEqual( len( cg.get_player_by_name('Ruxin').hand ), 3 )
+    for card in pot_cards:
+      self.assertTrue( card in cg.get_player_by_name('Ruxin').hand )
+
+  def test_card_game_method_get_player_by_name(self):
+    cg = self.seed_a_card_game()
+    player = cg.get_player_by_name('Ruxin')
+    self.assertIsInstance( player, Player )
+    self.assertIsNone( cg.get_player_by_name('Alf') )
+
+  def test_card_game_method_show_game_status(self):
+    cg = self.seed_a_card_game()
+
+  def test_card_game_method_get_card_from_deck(self):
+    cg = self.seed_a_card_game()
+    name_of_deck = 'main'
+    orig_deck_count = len( cg.decks[name_of_deck].cards )
+    a_card = cg.get_card_from_deck( name_of_deck )
+
+    self.assertIsInstance( a_card, Card )
+    self.assertEqual( orig_deck_count-1, len( cg.decks[name_of_deck].cards ) )
+
+  def test_card_game_method_get_decks(self):
     cg_name = 'game'
     cg_description = 'game desc'
     cg_card_game_rules ={
@@ -126,10 +168,19 @@ class Test_Unittest(unittest.TestCase):
     #   print(card)
 
 # rule configuration injection? or build into interfaces? or both?
-  def test_card_game_distributed_cards(self):
-    # from app import 
-    # distribute cards (function of the card game, set by rules NO!)
-    pass
+  def test_card_game_method_deal_cards(self):
+    """
+      deal cards to players:
+        cards get delt from the deck, one at a time to each player
+        to each players hand, 
+        takes an int
+        a game can have many dealt cards, not all players are dealt cards
+    """
+    cg = self.seed_a_card_game()
+    cards_dealt_each_player= 2
+
+    
+
 
   def test_card_game_win_conditions(self):
     # from app import 

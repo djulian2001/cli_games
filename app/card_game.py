@@ -1,5 +1,6 @@
 from app.game import Game
 from app.deck import Deck
+from app.utilities import pop_list_by_position
 
 class Card_Game( Game ):
   """This is a subclass of Game"""
@@ -35,13 +36,28 @@ class Card_Game( Game ):
     if 'main' in self.card_game_rules["deck_rules"]:
       for key in self.card_game_rules["deck_rules"]:
         self.decks[key] = self.build_deck(self.card_game_rules["deck_rules"][key])
-    else:
-      # print("No main deck in provided rules.  ... NEED TO FIX ...")
-      pass
+
     
   def build_deck(self,deck_rules):
     a_deck = Deck(
       unique_cards=True,
       deck_rules=deck_rules )
     return a_deck
+
+  def get_card_from_deck( self, deck_name='main', position='top' ):
+    """Gets a card from the game deck and returns that card"""
+    return pop_list_by_position( self.decks[deck_name].cards, position )
+
+  def get_player_by_name( self, name ):
+    for player in self.players:
+      if name == player.name:
+        return player
+
+  def player_takes_pot( self, player ):
+    """Takes in a player and adds the pot to their and clears the pot"""
+    player.add_to_hand( self.pot )
+    self.clear_pot()
+
+  def clear_pot(self):
+    self.pot = []
 
