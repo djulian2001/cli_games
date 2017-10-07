@@ -1,0 +1,30 @@
+---
+game: War
+type: card game
+deck_size: 52
+
+rules:
+  - number of players 2 ( maybe more but even )
+  - each player gets 52 / number of players
+  - all players flip a single card
+  - highest ranked card wins
+  - if cards rank match
+    - each player flips draws 4 cards last cards rank compared
+    - highest rank takes pot
+    - if cards still same rank, draw 2 cards last cards rank compared
+    - highest rank takes pot of cards
+  - player who can't play required cards in a war, auto loses pot (and game)
+
+  win condition: 
+    - player with all the cards wins game or player with no cards is out
+    - last player with cards is the winner
+
+
+war game cards:
+  suits: [diamond,spade,club,heart]
+  ranks: [2,3,4,5,6,7,8,9,10,j,q,k,a]
+
+  list of characteristics:
+    - label implies a rank
+    - 
+
