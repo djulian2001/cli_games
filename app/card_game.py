@@ -59,12 +59,12 @@ class Card_Game( Game ):
     for i in range( total_loops ):
       for index, player in enumerate(self.players):
         for a_loop in range( per_loop ):
-          player.hand.append( pop_list_by_position( self.decks[deck].cards, position ) )
+          player.hand.append( self.get_card_from_deck( deck , position ) )
 
     if remainder_loop > 0:
       for index, player in enumerate(self.players):
         for a_loop in range( remainder_loop ):
-          player.hand.append( pop_list_by_position( self.decks[deck].cards, position ) )
+          player.hand.append( self.get_card_from_deck( deck , position ) )
 
 
   def get_card_from_deck( self, deck_name='main', position='top' ):
@@ -83,4 +83,20 @@ class Card_Game( Game ):
 
   def clear_pot(self):
     self.pot = []
+
+
+  def get_game_status(self):
+    new_line="\n"
+    
+    status_output="{game} Game Status{n}".format(
+      game=self.name.capitalize(),
+      n=new_line)
+
+    for player in self.players:
+      status_output+="{name} has {cards} cards{n}".format(
+        name=player.name,
+        cards=len(player.hand),
+        n=new_line )
+
+    return status_output
 

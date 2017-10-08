@@ -37,6 +37,21 @@ class Test_Unittest(unittest.TestCase):
       description='add players',
       players=['Teddy','Ruxin'],
       card_game_rules=cg_card_game_rules )
+  def seed_a_default_dealt_card_game(self):
+    cg = self.seed_a_card_game()
+
+    cards_dealt_each_player = 3
+    cards_dealt_each_rotation = 1
+    deal_from_deck='main'
+
+    cg.deal_cards( 
+      total_cards=cards_dealt_each_player,
+      per_loop=cards_dealt_each_rotation,
+      deck=deal_from_deck,
+      position="top" )
+
+    return cg
+
 
   # APPLICATION TESTS:
   def test_game_interface(self):
@@ -129,7 +144,12 @@ class Test_Unittest(unittest.TestCase):
     self.assertIsNone( cg.get_player_by_name('Alf') )
 
   def test_card_game_method_show_game_status(self):
-    cg = self.seed_a_card_game()
+    cg = self.seed_a_default_dealt_card_game()
+    # generate game state output
+    output = cg.get_game_status()
+
+    for player in cg.players:
+      self.assertTrue( player.name in output )
 
   def test_card_game_method_get_card_from_deck(self):
     cg = self.seed_a_card_game()
