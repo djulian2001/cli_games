@@ -168,19 +168,40 @@ class Test_Unittest(unittest.TestCase):
     #   print(card)
 
 # rule configuration injection? or build into interfaces? or both?
-  def test_card_game_method_deal_cards(self):
-    """
-      deal cards to players:
-        cards get delt from the deck, one at a time to each player
-        to each players hand, 
-        takes an int
-        a game can have many dealt cards, not all players are dealt cards
-    """
+  def test_card_game_method_deal_cards_default(self):
+
     cg = self.seed_a_card_game()
-    cards_dealt_each_player= 2
+    cards_dealt_each_player = 2
+    cards_dealt_each_rotation = 1
+    deal_from_deck='main'
 
-    
+    cg.deal_cards( 
+      total_cards=cards_dealt_each_player,
+      per_loop=cards_dealt_each_rotation,
+      deck=deal_from_deck,
+      position="top" )
 
+    for player in cg.players:
+      self.assertEqual( len(player.hand),2 )
+    self.assertEqual( len(cg.decks['main'].cards),2 )
+
+  def test_card_game_method_deal_cards_with_remainder(self):
+
+    cg = copy.deepcopy( self.seed_a_card_game() )
+    cards_dealt_each_player = 3
+    cards_dealt_each_rotation = 2
+    deal_from_deck='main'
+
+    cg.deal_cards( 
+      total_cards=cards_dealt_each_player,
+      per_loop=cards_dealt_each_rotation,
+      deck=deal_from_deck,
+      position="random" )
+
+
+    for player in cg.players:
+      self.assertEqual( len(player.hand),3 )
+    self.assertEqual( len(cg.decks['main'].cards),0 )
 
   def test_card_game_win_conditions(self):
     # from app import 
@@ -197,7 +218,7 @@ class Test_Unittest(unittest.TestCase):
     self.assertIsInstance( p, Player )
     self.assertIs( type(p.hand), list )
 
-  def test_player_add_list_of_objects_to_hand(self):
+  def test_player_add_list_of_objects_to_hand_default(self):
     p_name="Bear"
     p = Player( name=p_name )
     obj1 = [1,2,3]
@@ -219,7 +240,7 @@ class Test_Unittest(unittest.TestCase):
     with self.assertRaises(TypeError):
       p.add_to_hand(obj3)
 
-  def test_player_remove_object_from_hand(self):
+  def test_player_remove_object_from_hand_default(self):
     p_name = "Teddy Bear"
     p = Player(name=p_name)
     obj1 = [1,2,3]
@@ -230,8 +251,30 @@ class Test_Unittest(unittest.TestCase):
     p.add_to_hand(l)
     postion='top'
     self.assertEqual( p.remove_from_hand(postion), obj4 )
+
+  def test_player_remove_object_from_hand_bottom(self):
+    p_name = "Teddy Bear"
+    p = Player(name=p_name)
+    obj1 = [1,2,3]
+    obj2 = Card(label='test1',rank=99,suit='nice',suit_rank=1)
+    obj3 = Card(label='test2',rank=1,suit='nice',suit_rank=1)
+    obj4 = 'a coin'
+    l = [obj4,obj3,obj2,obj1]
+    p.add_to_hand(l)
     postion='bottom'
     self.assertEqual( p.remove_from_hand(postion), obj1 )
+
+  def test_player_remove_object_from_hand_random(self):
+    p_name = "Teddy Bear"
+    p = Player(name=p_name)
+    obj1 = [1,2,3]
+    obj2 = Card(label='test1',rank=99,suit='nice',suit_rank=1)
+    obj3 = Card(label='test2',rank=1,suit='nice',suit_rank=1)
+    obj4 = 'a coin'
+    l = [obj4,obj3,obj2,obj1]
+    p.add_to_hand(l)
+    p.remove_from_hand('top')
+    p.remove_from_hand('bottom')
     postion='random'
     self.assertNotEqual( p.remove_from_hand(postion), obj1 )
     self.assertNotEqual( p.remove_from_hand(postion), obj4 )

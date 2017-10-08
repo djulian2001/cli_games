@@ -44,6 +44,29 @@ class Card_Game( Game ):
       deck_rules=deck_rules )
     return a_deck
 
+
+  def deal_cards( self, total_cards, per_loop=1, deck='main', position='top' ):
+    """
+      deal cards to active players:
+        @total_cards  as the number of cards each play should get dealt
+        @per_loop     as the number of cards each player gets till total is reached
+        @deck         as in which deck the cards come from
+    """
+    total_loops = int( total_cards / per_loop )
+    remainder_loop = total_cards % per_loop
+    
+    # ??? would this be a good spot to check game config, expected vs generated for deck ???
+    for i in range( total_loops ):
+      for index, player in enumerate(self.players):
+        for a_loop in range( per_loop ):
+          player.hand.append( pop_list_by_position( self.decks[deck].cards, position ) )
+
+    if remainder_loop > 0:
+      for index, player in enumerate(self.players):
+        for a_loop in range( remainder_loop ):
+          player.hand.append( pop_list_by_position( self.decks[deck].cards, position ) )
+
+
   def get_card_from_deck( self, deck_name='main', position='top' ):
     """Gets a card from the game deck and returns that card"""
     return pop_list_by_position( self.decks[deck_name].cards, position )
