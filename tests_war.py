@@ -7,6 +7,7 @@ from app.card_game import Card_Game
 from app.deck import Deck
 from app.card import Card
 from app.player import Player
+from app.card_game_war import Card_Game_War
 
 class Test_Unittest(unittest.TestCase):
   
@@ -45,7 +46,7 @@ class Test_Unittest(unittest.TestCase):
     deal_from_deck='main'
 
     cg.deal_cards( 
-      total_cards=cards_dealt_each_player,
+      cards_per_player=cards_dealt_each_player,
       per_loop=cards_dealt_each_rotation,
       deck=deal_from_deck,
       position="top" )
@@ -196,7 +197,7 @@ class Test_Unittest(unittest.TestCase):
     deal_from_deck='main'
 
     cg.deal_cards( 
-      total_cards=cards_dealt_each_player,
+      cards_per_player=cards_dealt_each_player,
       per_loop=cards_dealt_each_rotation,
       deck=deal_from_deck,
       position="top" )
@@ -213,7 +214,7 @@ class Test_Unittest(unittest.TestCase):
     deal_from_deck='main'
 
     cg.deal_cards( 
-      total_cards=cards_dealt_each_player,
+      cards_per_player=cards_dealt_each_player,
       per_loop=cards_dealt_each_rotation,
       deck=deal_from_deck,
       position="random" )
@@ -378,6 +379,35 @@ class Test_Unittest(unittest.TestCase):
       c.rank = 89
     with self.assertRaises( AttributeError ):
       c.label = "no this value"
+
+  def seed_a_card_game_of_war(self):
+    # so far the game only should require a list of string values for player names
+    player_list=['alex','pete']
+    return Card_Game_War( players = player_list )
+
+  def test_war_interface( self ):
+    """The war game"""
+    player_list=['alex','dave']
+    w1 = self.seed_a_card_game_of_war()
+    w2 = Card_Game_War( players=player_list )
+
+    self.assertEqual( w1.name, w2.name )
+    self.assertEqual( w1.description, w2.description )
+    self.assertEqual( w1.total_players, w2.total_players )
+    self.assertEqual( w1.max_team_size, w2.max_team_size )
+    self.assertEqual( w1.rules, w2.rules )
+    self.assertNotEqual( w1.players, w2.players )
+    
+  def test_war_method_deal_cards(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    self.assertEqual( 26, len( w1.get_player_by_name('pete').hand ) )
+    self.assertEqual( 26, len( w1.get_player_by_name('alex').hand ) )
+
+  def test_war_method_turn(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    
 
 if __name__=="__main__":
   unittest.main()

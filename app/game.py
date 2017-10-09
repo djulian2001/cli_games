@@ -18,3 +18,13 @@ class Game(object):
   def set_players(self, players):
     return [ Player( name=player ) for player in players ]
 
+  def get_player_by_name( self, name ):
+    """
+      Returns a player object from the players list
+      @name as a string
+      returns Player object
+      NOTE: might be better as a Game method
+    """
+    for player in self.players:
+      if name == player.name:
+        return player
