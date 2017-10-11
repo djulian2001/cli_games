@@ -8,6 +8,7 @@ from app.deck import Deck
 from app.card import Card
 from app.player import Player
 from app.card_game_war import Card_Game_War
+from app.abc_card_game import ABC_Card_Game
 
 class Test_Unittest(unittest.TestCase):
   
@@ -38,6 +39,7 @@ class Test_Unittest(unittest.TestCase):
       description='add players',
       players=['Teddy','Ruxin'],
       card_game_rules=cg_card_game_rules )
+  
   def seed_a_default_dealt_card_game(self):
     cg = self.seed_a_card_game()
 
@@ -73,7 +75,7 @@ class Test_Unittest(unittest.TestCase):
     self.assertIs( type( g.total_teams), int )
     self.assertEqual( g.total_teams, 2)
 
-  def test_game_set_players(self):
+  def test_game_method_set_players(self):
     g = Game(
       name='adding',
       description='add players',
@@ -98,6 +100,10 @@ class Test_Unittest(unittest.TestCase):
 
     self.assertIsInstance( cg.players[0], Player )
     self.assertEqual( len( cg.players), 2 )
+
+  def test_game_method_exit_game(self):
+    g = Game('help','help',['bob'])
+    self.assertTrue( hasattr( g, "exit_game" ) )
 
   def test_card_game_interface(self):
     self.assertTrue( issubclass( Card_Game, Game ) )
@@ -224,10 +230,18 @@ class Test_Unittest(unittest.TestCase):
       self.assertEqual( len(player.hand),3 )
     self.assertEqual( len(cg.decks['main'].cards),0 )
 
-  def test_card_game_win_conditions(self):
+  def test_card_game_method_win_conditions(self):
     # from app import 
     # determine win
-    pass
+    wg = self.seed_a_card_game()
+    self.assertTrue( hasattr(wg,'win'))
+
+  def test_card_game_method_add_card_to_pot( self ):
+    wg = self.seed_a_card_game()
+    self.assertTrue( hasattr( wg, 'add_card_to_pot') )
+    card = Card('big',1,'bad',1)
+    wg.add_card_to_pot( card )
+    self.assertEqual( len(wg.pot), 1 )
 
   def test_player_interface(self):
     p_name = "Teddy"
@@ -239,7 +253,7 @@ class Test_Unittest(unittest.TestCase):
     self.assertIsInstance( p, Player )
     self.assertIs( type(p.hand), list )
 
-  def test_player_add_list_of_objects_to_hand_default(self):
+  def test_player_method_add_list_of_objects_to_hand_default(self):
     p_name="Bear"
     p = Player( name=p_name )
     obj1 = [1,2,3]
@@ -261,7 +275,7 @@ class Test_Unittest(unittest.TestCase):
     with self.assertRaises(TypeError):
       p.add_to_hand(obj3)
 
-  def test_player_remove_object_from_hand_default(self):
+  def test_player_method_remove_object_from_hand_default(self):
     p_name = "Teddy Bear"
     p = Player(name=p_name)
     obj1 = [1,2,3]
@@ -285,7 +299,7 @@ class Test_Unittest(unittest.TestCase):
     postion='bottom'
     self.assertEqual( p.remove_from_hand(postion), obj1 )
 
-  def test_player_remove_object_from_hand_random(self):
+  def test_player_method_remove_object_from_hand_random(self):
     p_name = "Teddy Bear"
     p = Player(name=p_name)
     obj1 = [1,2,3]
@@ -301,15 +315,6 @@ class Test_Unittest(unittest.TestCase):
     self.assertNotEqual( p.remove_from_hand(postion), obj4 )
     self.assertFalse( obj1 in p.hand )
 
-# manage players war.py
-  # turns (set up rules)
-  # cards (set by deck rules)
-
-# keep track of games state of cards
-  # cards in play just flipped
-  # cards in pot on table
-  # cards in hand by players
-  # cards in deck
 
   def test_deck_interface(self):
     rules = {
@@ -385,6 +390,14 @@ class Test_Unittest(unittest.TestCase):
     player_list=['alex','pete']
     return Card_Game_War( players = player_list )
 
+  def test_test_abc_interface(self):
+    from app.test_abc import Test_ABC
+    with self.assertRaises( TypeError ):
+      abstract = ABC_Card_Game()
+    with self.assertRaises( TypeError ):
+      tabs = Test_ABC()
+    # tabs.turn()
+
   def test_war_interface( self ):
     """The war game"""
     player_list=['alex','dave']
@@ -397,6 +410,18 @@ class Test_Unittest(unittest.TestCase):
     self.assertEqual( w1.max_team_size, w2.max_team_size )
     self.assertEqual( w1.rules, w2.rules )
     self.assertNotEqual( w1.players, w2.players )
+    for player in w2.players:
+      self.assertTrue( player.name in player_list )
+
+# manage players war.py
+  # turns (set up rules)
+  # cards (set by deck rules)
+
+# keep track of games state of cards
+  # cards in play just flipped
+  # cards in pot on table
+  # cards in hand by players
+  # cards in deck
     
   def test_war_method_deal_cards(self):
     w1 = self.seed_a_card_game_of_war()
@@ -405,9 +430,119 @@ class Test_Unittest(unittest.TestCase):
     self.assertEqual( 26, len( w1.get_player_by_name('alex').hand ) )
 
   def test_war_method_turn(self):
+    """
+        which triggers a card turn() requests player input of turn options [flip], 
+          a turn option configures a turn event which pops the cards into the pot
+          then compares cards ranks ->
+            this could result in a war condition or a take_pot for a player with the highest rank
+    """
     w1 = self.seed_a_card_game_of_war()
     w1.deal_cards()
+    self.assertTrue( hasattr( w1, "turn") )
+    output = w1.turn( player=w1.players[0], choice=1 )
+    self.assertIs( type( output ), tuple )
+    self.assertIs( type( output[0] ), int )
+    self.assertIs( type( output[1] ), str )
+
+    self.assertEqual( len( w1.pot ), 1)
+    self.assertEqual( len(w1.players[0].hand), 25 )
+    self.assertIs( type( w1.pot[0] ), Card )
+
+    with self.assertRaises( TypeError ):
+      output2 = w1.turn(player=w1.players[1], choice=None)
     
+    with self.assertRaises( SystemExit ) as cm:
+        w1.turn( w1.players[0], choice=9 )
+    self.assertEqual( cm.exception.code, 1 )
+
+  def test_war_method_compare_cards_normal(self):
+    w1 = self.seed_a_card_game_of_war()
+    self.assertTrue( hasattr( w1 , 'compare_cards' ) )
+    w1.deal_cards()
+    aturn=[]
+    for player in w1.players:
+      aturn.append( ( player, w1.turn( player,choice=1 ) ) )
+    self.assertEqual( len( aturn ), 2 )
+    output = w1.compare_cards( aturn )
+    if output == None:
+      self.assertTrue( aturn[0][1] != aturn[1][1] )
+    else:
+      self.assertIs( type(output), Player )
+
+  def test_war_method_compare_cards_player_one_wins(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    aturn= [  ( w1.players[0], (1,'player one') ),
+              ( w1.players[1], (3,'player two') ), ]
+    player_one = w1.compare_cards( aturn )
+
+    self.assertEqual( player_one, w1.players[0] )
+
+  def test_war_method_compare_cards_none(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    aturn= [  ( w1.players[0], (1,'player one') ),
+              ( w1.players[1], (1,'player one') ), ]
+    player_none = w1.compare_cards( aturn )
+
+    self.assertIsNone( player_none )
+
+  def test_war_method_it_is_war(self):
+    w1 = self.seed_a_card_game_of_war()
+    self.assertTrue( hasattr( w1, 'it_is_war' ) )
+    w1.deal_cards()
+    
+    # player doesn't have the cards to play, they lose!
+    w1.it_is_war( cards = 3 )
+    self.assertEqual( len( w1.players[0].hand ), 23 )
+    self.assertEqual( len( w1.players[1].hand ), 23 )
+
+  def test_war_method_it_is_war(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+
+    for i in range(24):
+      w1.players[1].hand.append( w1.players[0].remove_from_hand('top') )
+
+    self.assertEqual( len( w1.players[0].hand ),2 )
+
+    with self.assertRaises( IndexError ):
+      w1.it_is_war(cards = 3)
+
+    self.assertEqual( len( w1.players[0].hand ),0 )
+    
+    # IndexError
+
+  def test_war_method_who_won(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    self.assertTrue( hasattr( w1, 'who_won' ) )
+    
+    for i in range(26):
+      w1.players[1].hand.append( w1.players[0].remove_from_hand('top') )
+
+    player = w1.who_won()
+      
+    self.assertIsInstance( player, Player )
+    self.assertEqual( len( player.hand ), 52 )
+
+  def test_war_method_win(self):
+    w1 = self.seed_a_card_game_of_war()
+    self.assertTrue( w1.win() )
+    w1.deal_cards()
+    self.assertFalse( w1.win() )
+    w1.players[0].hand = []
+    self.assertEqual( len( w1.players[0].hand ), 0 )
+    self.assertTrue( w1.win() )
+
+  def test_war_method_status(self):
+    w1 = self.seed_a_card_game_of_war()
+    self.assertTrue( hasattr( w1, 'status' ) )
+
+  def test_war_method_turn_choices(self):
+    w1 = self.seed_a_card_game_of_war()
+    w1.deal_cards()
+    self.assertTrue( hasattr( w1, 'turn_choice' ) )
 
 if __name__=="__main__":
   unittest.main()

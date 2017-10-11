@@ -1,24 +1,30 @@
 from app.game import Game
 from app.deck import Deck
-from app.utilities import pop_list_by_position
+from app.utilities import pop_list_by_position, clear_screen
+from abc import ABC, ABCMeta, abstractmethod
+from app.abc_card_game import ABC_Card_Game
 
-class Card_Game( Game ):
+
+class Card_Game( Game, ABC_Card_Game ):
+# class Card_Game( Game, ABC ):
+  # __metaclass = ABCMeta
   """This is a subclass of Game"""
   def __init__(
-      self,
-      name,
-      description,
-      card_game_rules,
-      players,
-      total_players=2,
-      max_team_size=1 ):
-    
-    Game.__init__(self, name, description, players, total_players, max_team_size)
+                self,
+                name,
+                description,
+                card_game_rules,
+                players,
+                total_players=2,
+                max_team_size=1 ):
+  
+    super().__init__( name, description, players, total_players, max_team_size )
     self.decks = { 'main': None, }
     # this would be better if this was a list of Rule() objects or a Rules() object
     self.card_game_rules = self.set_card_game_rules( card_game_rules )
     self.pot = []
     self.set_decks()
+
 
   def set_card_game_rules(self, rules):
     if 'deck_rules' in rules:
@@ -47,6 +53,7 @@ class Card_Game( Game ):
 
   def deal_cards( self, cards_per_player, per_loop=1, deck='main', position='top' ):
     """
+      Required by the ABC card game class.
       deal cards to active players:
         @cards_per_player  as the number of cards each play should get dealt
         @per_loop     as the number of cards each player gets till total is reached
@@ -66,6 +73,8 @@ class Card_Game( Game ):
         for a_loop in range( remainder_loop ):
           player.hand.append( self.get_card_from_deck( deck , position ) )
 
+  def get_turn_options( self ):
+    return self.card_game_rules['game_rules']['turn_options']
 
   def get_card_from_deck( self, deck_name='main', position='top' ):
     """Gets a card from the game deck and returns that card"""
@@ -79,7 +88,15 @@ class Card_Game( Game ):
   def clear_pot(self):
     self.pot = []
 
+  def add_card_to_pot( self, card ):
+    """
+      Takes a card class object and appends it to the pot
+      @card is a object of a Card class
+    """
+    self.pot.append( card )
+
   def get_game_status(self):
+    """Required by the ABC card game class."""
     new_line="\n"
     
     status_output="{game} Game Status{n}".format(
@@ -93,4 +110,26 @@ class Card_Game( Game ):
         n=new_line )
 
     return status_output
+
+  def a_players_turn_put_card_in_pot( self, player, position ):
+    """
+      A specific state change of a card from a players hand to the card games pot
+      @player is a player class object
+      @position is a string as top, bottom, or random
+      returns a tuple of the card objects attributes
+    """
+    to_pot_card = player.remove_from_hand()
+    self.add_card_to_pot( to_pot_card )
+    return ( to_pot_card.rank, to_pot_card.__str__() )
+    
+
+  # def turn( self, class_function, **kwargs ):
+  def turn( self ):
+    """Required by the ABC card game class."""
+    # return class_function( **kwargs )
+    pass
+    
+  def win( self, condition, state ):
+    """Required by the ABC card game class."""
+    return condition( state )
 

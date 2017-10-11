@@ -28,3 +28,5 @@ war game cards:
     - label implies a rank
     - 
 
+
+clamp = lambda n, minn, maxn: max(min(maxn, n), minn)
