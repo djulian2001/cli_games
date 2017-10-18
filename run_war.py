@@ -3,6 +3,11 @@ from app.utilities import clear_screen
 # tdd
 
 def main():
+  def win_print( war ):
+    print_status()
+    winner = war.who_won()
+    print( "The winner: {name} in {turns} turns!".format( name=winner.name, turns=round_index ) )
+
   def print_status():
     # clear_screen()
     print("------------------")
@@ -32,6 +37,11 @@ def main():
         # print("------------------")
         # war.turn_choice()
         # choice = int(input("make your choice: "))
+        if war.check_player_is_out( player ) == True:
+          war.player_takes_pot( war.players[0] )
+          win_print( war )
+          war.exit_game()
+
         choice = 1
         if choice != 9:
           turn_state.append( ( player, war.turn( player, choice ) ) )
@@ -57,9 +67,7 @@ def main():
         except IndexError as e:
           break
         
-
-  winner = war.who_won()
-  print( "The winner: {name} in {turns} turns!".format( name=winner.name, turns=round_index ) )
-
+  win_print( war )
+  
 if __name__ == '__main__':
   main()

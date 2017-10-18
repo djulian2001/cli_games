@@ -96,13 +96,13 @@ class Card_Game( Game, ABC_Card_Game ):
   def clear_pot(self):
     self.pot = []
 
-  def remove_loser(self, player ):
-    """
-      Removes a player from the players list.
-      @player is a loser needs to be poped off the list
-    """
-    # this needs to change.... from remove to pop.
-    self.players.remove( player )
+  # def remove_loser(self, player ):
+  #   """
+  #     Removes a player from the players list.
+  #     @player is a loser needs to be poped off the list
+  #   """
+  #   # this needs to change.... from remove to pop.
+  #   self.players.remove( player )
 
   def add_card_to_pot( self, card ):
     """
@@ -125,6 +125,9 @@ class Card_Game( Game, ABC_Card_Game ):
         cards=len(player.hand),
         n=new_line )
 
+    status_output += "pot has {pot} cards{n}".format(
+      pot = len(self.pot),
+      n = new_line )
     return status_output
 
   def a_players_turn_put_card_in_pot( self, player, position ):

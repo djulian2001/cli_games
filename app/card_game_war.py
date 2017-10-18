@@ -61,7 +61,7 @@ class Card_Game_War( Card_Game ):
       return None
 
   def win(self):
-    hands_state = ( len(i.hand) for i in self.players )
+    hands_state = ( len(player.hand) for player in self.players )
     return super().win( Card_Game_War.win_condition, hands_state )
 
   def it_is_war(self, cards):
@@ -73,15 +73,13 @@ class Card_Game_War( Card_Game ):
     def loop_cards( player, loops ):
       for i in range(loops):
         self.add_card_to_pot( player.remove_from_hand( position='top' ) )
-    out_players=[]
+
     for player in self.players:
       if len( player.hand ) < cards:
-        out_players.append(player)
+        super().player_is_out(player)
         loop_cards( player, len( player.hand ) )
       else:
-        loop_cards(player,cards)
-       
-    return ( True, None ) if len( out_players ) == 0 else ( False, out_players )
+        loop_cards( player, cards)       
 
   def status(self):
     print( super().get_game_status() )
