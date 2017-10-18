@@ -8,6 +8,7 @@ class Game(object):
     self.name = name
     self.description = description
     self.players = self.set_players( players )
+    self.players_out = []
     self.total_players = total_players
     self.max_team_size = max_team_size
     self.total_teams = self.get_total_teams()

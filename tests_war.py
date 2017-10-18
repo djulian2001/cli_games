@@ -74,6 +74,7 @@ class Test_Unittest(unittest.TestCase):
     self.assertIs( type( g.max_team_size ), int )
     self.assertIs( type( g.total_teams), int )
     self.assertEqual( g.total_teams, 2)
+    self.assertEqual( len(g.players_out),0 )
 
   def test_game_method_set_players(self):
     g = Game(
@@ -493,11 +494,13 @@ class Test_Unittest(unittest.TestCase):
     w1.deal_cards()
     
     # player doesn't have the cards to play, they lose!
-    w1.it_is_war( cards = 3 )
+    not_loswers = w1.it_is_war( cards = 3 )
+    self.assertTrue( not_loswers[0] )
+    self.assertIsNone( not_loswers[1] )
     self.assertEqual( len( w1.players[0].hand ), 23 )
     self.assertEqual( len( w1.players[1].hand ), 23 )
 
-  def test_war_method_it_is_war(self):
+  def test_war_method_it_is_war_out_of_cards(self):
     w1 = self.seed_a_card_game_of_war()
     w1.deal_cards()
 
@@ -505,13 +508,19 @@ class Test_Unittest(unittest.TestCase):
       w1.players[1].hand.append( w1.players[0].remove_from_hand('top') )
 
     self.assertEqual( len( w1.players[0].hand ),2 )
+    self.assertFalse( w1.check_player_is_out( w1.players[0] ) )
 
-    with self.assertRaises( IndexError ):
-      w1.it_is_war(cards = 3)
-
-    self.assertEqual( len( w1.players[0].hand ),0 )
+    # with self.assertRaises( IndexError ):
+    #   w1.it_is_war(cards = 3)  should return boolean
+    losers = w1.it_is_war(cards = 3)
     
-    # IndexError
+    self.assertFalse( losers[0] )
+        
+    self.assertEqual( len( losers[1][0].hand ),0 )
+    self.assertTrue( w1.check_player_is_out( losers[1][0] ) )
+    # IndexError rasised loser returned.
+    w1.remove_loser( losers[1][0] )
+    self.assertEqual( len( w1.players ), 1 )
 
   def test_war_method_who_won(self):
     w1 = self.seed_a_card_game_of_war()

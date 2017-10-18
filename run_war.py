@@ -10,15 +10,18 @@ def main():
     
   clear_screen()
   player_names = []
+  round_index = 0
+
   for i in range( Card_Game_War.total_players ):
     player_names.append( input( "Enter player {player} name: ".format( player = i+1 ) ) )
   
   war = Card_Game_War( player_names )
   war.deal_cards()
-  
+
   while war.win() == False:
     new_turn = True
     war_time = 3
+    round_index += 1
 
     # print_status()
     while new_turn != False:
@@ -56,7 +59,7 @@ def main():
         
 
   winner = war.who_won()
-  print( "The winner! {}".format( winner.name ) )
+  print( "The winner: {name} in {turns} turns!".format( name=winner.name, turns=round_index ) )
 
 if __name__ == '__main__':
   main()

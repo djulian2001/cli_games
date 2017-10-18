@@ -85,8 +85,24 @@ class Card_Game( Game, ABC_Card_Game ):
     player.add_to_hand( self.pot )
     self.clear_pot()
 
+  def check_player_is_out( self, player ):
+    """
+      If the player have no cards and they are out.
+      @player this should be a loser
+      Return True or False
+    """
+    return True if len(player.hand) == 0 else False
+
   def clear_pot(self):
     self.pot = []
+
+  def remove_loser(self, player ):
+    """
+      Removes a player from the players list.
+      @player is a loser needs to be poped off the list
+    """
+    # this needs to change.... from remove to pop.
+    self.players.remove( player )
 
   def add_card_to_pot( self, card ):
     """

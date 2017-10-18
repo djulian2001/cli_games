@@ -70,10 +70,18 @@ class Card_Game_War( Card_Game ):
         into the pot by each player.
       @cards int of 1 or 3 value
     """
-    for card in range(cards):
-      for player in self.players:
-
+    def loop_cards( player, loops ):
+      for i in range(loops):
         self.add_card_to_pot( player.remove_from_hand( position='top' ) )
+    out_players=[]
+    for player in self.players:
+      if len( player.hand ) < cards:
+        out_players.append(player)
+        loop_cards( player, len( player.hand ) )
+      else:
+        loop_cards(player,cards)
+       
+    return ( True, None ) if len( out_players ) == 0 else ( False, out_players )
 
   def status(self):
     print( super().get_game_status() )
