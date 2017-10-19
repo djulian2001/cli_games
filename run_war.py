@@ -33,7 +33,6 @@ def main():
     #   new_turn = False
     # else:
     new_turn = True 
-    print(round_index)
     while new_turn != False:
       turn_state=[]
       for player in war.players:
