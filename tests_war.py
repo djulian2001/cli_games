@@ -165,7 +165,9 @@ class Test_Unittest(unittest.TestCase):
   def test_card_game_method_show_game_status(self):
     cg = self.seed_a_default_dealt_card_game()
     # generate game state output
-    output = cg.get_game_status()
+    output = cg.get_game_state()
+
+    self.assertIs( type(output), str )
 
     for player in cg.players:
       self.assertTrue( player.name in output )
@@ -246,14 +248,7 @@ class Test_Unittest(unittest.TestCase):
     # from app import 
     # determine win
     wg = self.seed_a_card_game()
-    self.assertTrue( hasattr(wg,'win'))
-
-  def test_card_game_method_add_card_to_pot( self ):
-    wg = self.seed_a_card_game()
-    self.assertTrue( hasattr( wg, 'add_card_to_pot') )
-    card = Card('big',1,'bad',1)
-    wg.add_card_to_pot( card )
-    self.assertEqual( len(wg.pot), 1 )
+    self.assertTrue( hasattr(wg,'check_win_condition'))
 
   def test_player_interface(self):
     p_name = "Teddy"

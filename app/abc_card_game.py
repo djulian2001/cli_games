@@ -1,7 +1,6 @@
 # from abc import abc, ABCMeta, abstractmethod
 from abc import ABC, ABCMeta, abstractmethod
 
-
 class ABC_Card_Game( ABC ):
   __metaclass__ = ABCMeta
 
@@ -19,6 +18,7 @@ class ABC_Card_Game( ABC ):
   @abstractmethod
   def win(self):
     pass
+  
   @abstractmethod
-  def get_game_status(self):
+  def status(self):
     pass

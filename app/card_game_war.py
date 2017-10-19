@@ -5,7 +5,7 @@ from app.utilities import clear_screen
 
 
 # class Card_Game_War( Card_Game, ABC_Card_Game ):
-class Card_Game_War( Card_Game ):
+class Card_Game_War( Card_Game, ABC_Card_Game ):
 
   name              = "War"
   description       = "A game of war!"
@@ -36,18 +36,6 @@ class Card_Game_War( Card_Game ):
       card_game_rules = Card_Game_War.rules,
       players = players )
 
-  def deal_cards(self):
-    self.decks['main'].shuffled()
-    super().deal_cards( cards_per_player = Card_Game_War.cards_per_player )
-
-  def turn(self, player, choice ):
-    if choice == 1:
-      return super().a_players_turn_put_card_in_pot( player, position='top' )
-    elif choice == 9:
-      self.exit_game()
-    else:
-      raise TypeError
-
   def compare_cards( self, a_round ):
     """
       Takes in a list of 2 items, each item is a tuple of a player and a turn result tuple
@@ -60,9 +48,9 @@ class Card_Game_War( Card_Game ):
     else:
       return None
 
-  def win(self):
-    hands_state = ( len(player.hand) for player in self.players )
-    return super().win( Card_Game_War.win_condition, hands_state )
+  def deal_cards(self):
+    self.decks['main'].shuffled()
+    super().deal_cards( cards_per_player = Card_Game_War.cards_per_player )
 
   def it_is_war(self, cards):
     """
@@ -81,8 +69,13 @@ class Card_Game_War( Card_Game ):
       else:
         loop_cards( player, cards)       
 
-  def status(self):
-    print( super().get_game_status() )
+  def turn(self, player, choice ):
+    if choice == 1:
+      return super().player_puts_card_in_pot( player, position='top' )
+    elif choice == 9:
+      self.exit_game()
+    else:
+      raise TypeError
 
   def turn_choice(self):
     for choice in super().get_turn_options():
@@ -93,4 +86,22 @@ class Card_Game_War( Card_Game ):
     for player in self.players:
       if len( player.hand ) == ( Card_Game_War.total_players * Card_Game_War.cards_per_player ):
         return player
-    
+
+  def win(self):
+    """
+      Abstract base class requirement:
+      This should be the only method required to call to check if a games win conditions
+        have been met
+      returns a boolean, True as win conditions have been met, False they have not
+    """
+    hands_state = ( len(player.hand) for player in self.players )
+    return super().check_win_condition( Card_Game_War.win_condition, hands_state )
+
+  def status(self):
+    """
+      Abstract base class requirement:
+      This is an observable state of the game
+      returns a formated string
+    """
+    return super().get_game_state()
+
