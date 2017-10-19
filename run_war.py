@@ -22,13 +22,18 @@ def main():
   
   war = Card_Game_War( player_names )
   war.deal_cards()
-
-  while war.win() == False:
-    new_turn = True
+  # game_win = False
+  
+  while war.win() == False and len( war.players ) != 1:
     war_time = 3
     round_index += 1
-
     # print_status()
+    # if len( war.players ) == 1:
+    #   
+    #   new_turn = False
+    # else:
+    new_turn = True 
+    print(round_index)
     while new_turn != False:
       turn_state=[]
       for player in war.players:
@@ -37,10 +42,6 @@ def main():
         # print("------------------")
         # war.turn_choice()
         # choice = int(input("make your choice: "))
-        if war.check_player_is_out( player ) == True:
-          war.player_takes_pot( war.players[0] )
-          win_print( war )
-          war.exit_game()
 
         choice = 1
         if choice != 9:
@@ -54,19 +55,26 @@ def main():
         # playertwo=turn_state[1][0].name,
         # cardtwo=turn_state[1][1][1] ) )
 
-      compared = war.compare_cards( turn_state )
-      if compared is not None:
-        # print("{name} takes the turn!".format(name=compared.name))
-        war.player_takes_pot(compared)
-        new_turn=False
-      else:
-        # print("IT is War!")
-        try:
+      if len(turn_state) == 2:
+        compared = war.compare_cards( turn_state )  
+        if compared is not None:
+          # print("{name} takes the turn!".format(name=compared.name))
+          war.player_takes_pot(compared)
+          new_turn=False
+        else:
+          # print("IT is War!")
           war.it_is_war( war_time )
           war_time = 1
-        except IndexError as e:
-          break
-        
+      else:
+        for player in war.players:
+          if war.check_player_is_out( player ) == True:
+            war.player_is_out( player )
+        new_turn=False
+        war.player_takes_pot( war.players[0] )
+
+
+       
+    
   win_print( war )
   
 if __name__ == '__main__':

@@ -499,6 +499,17 @@ class Test_Unittest(unittest.TestCase):
 
     self.assertIsNone( player_none )
 
+  # def test_war_method_compare_cards_index_range(self):
+  #   w1 = self.seed_a_card_game_of_war()
+  #   w1.deal_cards()
+    
+  #   aturn= [  ( w1.players[0], (1,'player one') ),
+  #             ( w1.players[0], (1, None) ), ]
+
+  #   player_none = w1.compare_cards( aturn )
+
+  #   self.assertEqual( player_none, 1 )
+
   def test_war_method_it_is_war(self):
     w1 = self.seed_a_card_game_of_war()
     self.assertTrue( hasattr( w1, 'it_is_war' ) )
