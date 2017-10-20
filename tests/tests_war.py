@@ -55,7 +55,6 @@ class Test_Unittest(unittest.TestCase):
 
     return cg
 
-
   # APPLICATION TESTS:
   def test_game_interface(self):
     g = Game(
