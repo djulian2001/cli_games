@@ -64,10 +64,17 @@ class Card_Game_War( Card_Game, ABC_Card_Game ):
 
     for player in self.players:
       if len( player.hand ) < cards:
-        super().player_is_out(player)
         loop_cards( player, len( player.hand ) )
       else:
         loop_cards( player, cards)       
+
+  def status(self):
+    """
+      Abstract base class requirement:
+      This is an observable state of the game
+      returns a formated string
+    """
+    return super().get_game_state()
 
   def turn(self, player, choice ):
     if choice == 1:
@@ -83,8 +90,9 @@ class Card_Game_War( Card_Game, ABC_Card_Game ):
       print(out_choice)
 
   def who_won(self):
+    """Should return the player that has all the cards or doesn't have zero cards"""
     for player in self.players:
-      if len( player.hand ) == ( Card_Game_War.total_players * Card_Game_War.cards_per_player ):
+      if len( player.hand ) != 0:
         return player
 
   def win(self):
@@ -96,12 +104,3 @@ class Card_Game_War( Card_Game, ABC_Card_Game ):
     """
     hands_state = ( len(player.hand) for player in self.players )
     return super().check_win_condition( Card_Game_War.win_condition, hands_state )
-
-  def status(self):
-    """
-      Abstract base class requirement:
-      This is an observable state of the game
-      returns a formated string
-    """
-    return super().get_game_state()
-

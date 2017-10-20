@@ -516,11 +516,6 @@ class Test_Unittest(unittest.TestCase):
     self.assertEqual( len( w1.players[0].hand ),2 )
     self.assertFalse( w1.check_player_is_out( w1.players[0] ) )
 
-    w1.it_is_war(cards = 3)
-    
-    self.assertTrue( w1.check_player_is_out( w1.players_out[0] ) )
-    self.assertEqual( len( w1.players ), 1 )
-
   def test_war_method_who_won(self):
     w1 = self.seed_a_card_game_of_war()
     w1.deal_cards()

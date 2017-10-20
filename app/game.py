@@ -2,7 +2,7 @@ from app.player import Player
 from app.utilities import clear_screen
 import sys
 
-class Game(object):
+class Game( object ):
   """a bit high level but i'm woriking on inheratance"""
   def __init__( self,
                 name,

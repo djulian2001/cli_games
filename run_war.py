@@ -11,8 +11,18 @@ def main():
   def print_status():
     # clear_screen()
     print("------------------")
-    war.status()
-    
+    print( war.status() )
+  
+  def check_game_state( war ):
+    """Player runs out of cards, triggers win for other player and ends game..."""
+    # print('p1: {}, p2: {}, pot: {}, at {}'.format(len(war.players[0].hand),len(war.players[1].hand), len(war.pot), round_index ) )
+    if war.win():
+      for player in war.players:
+        if len(player.hand) != 0:
+          war.player_takes_pot( player )
+      win_print( war )
+      war.exit_game()
+
   clear_screen()
   player_names = []
   round_index = 0
@@ -22,59 +32,39 @@ def main():
   
   war = Card_Game_War( player_names )
   war.deal_cards()
-  # game_win = False
   
-  while war.win() == False and len( war.players ) != 1:
+  while war.win() == False:
     war_time = 3
     round_index += 1
-    # print_status()
-    # if len( war.players ) == 1:
-    #   
-    #   new_turn = False
-    # else:
-    new_turn = True 
-    while new_turn != False:
-      turn_state=[]
-      for player in war.players:
-        # print("{name}\'s turn".format( name = player.name ) )
-        # print("option\taction")
-        # print("------------------")
-        # war.turn_choice()
-        # choice = int(input("make your choice: "))
+    new_turn = True
 
+    while new_turn != False:
+      cards_played = []
+      for player in war.players:
         choice = 1
         if choice != 9:
-          turn_state.append( ( player, war.turn( player, choice ) ) )
+          cards_played.append( ( player, war.turn( player, choice ) ) )
         else:
           war.exit_game()
 
-      # print("{playerone}'s card {cardone}\n{playertwo}'s card {cardtwo}\n".format(
-        # playerone=turn_state[0][0].name,
-        # cardone=turn_state[0][1][1],
-        # playertwo=turn_state[1][0].name,
-        # cardtwo=turn_state[1][1][1] ) )
+      check_game_state( war )
 
-      if len(turn_state) == 2:
-        compared = war.compare_cards( turn_state )  
-        if compared is not None:
-          # print("{name} takes the turn!".format(name=compared.name))
-          war.player_takes_pot(compared)
-          new_turn=False
-        else:
-          # print("IT is War!")
-          war.it_is_war( war_time )
-          war_time = 1
-      else:
-        for player in war.players:
-          if war.check_player_is_out( player ) == True:
-            war.player_is_out( player )
+      try:
+        compared = war.compare_cards( cards_played )  
+      except IndexError as e:
+        print(compared, cards_played)
+        check_game_state( war )
+
+      if compared is not None:
+        war.player_takes_pot(compared)
         new_turn=False
-        war.player_takes_pot( war.players[0] )
-
-
+      else:
+        war.it_is_war( war_time )
+        war_time = 1
+        check_game_state( war )
        
-    
   win_print( war )
+  war.exit_game()
   
 if __name__ == '__main__':
   main()
