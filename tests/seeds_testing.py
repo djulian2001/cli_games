@@ -1,7 +1,11 @@
-from app.card_game import Card_Game 
+from app.card_game import Card_Game
+from app.card_game_war import Card_Game_War
+
+from app.player import Player
+from app.deck import Deck
 
 class Seeds_Card_Game(object):
-  """SEEDING for REUSE:"""
+  """SEEDING for REUSE of card game objects"""
   
   def seed_a_card_game(self):
     cg_card_game_rules ={
@@ -56,3 +60,30 @@ class Seeds_Card_Game(object):
 
     return cg
 
+class Seeds_Players(object):
+  """SEEDING for REUSE of player objects"""
+
+  def seed_player(self, name='Teddy'):
+    p = Player(
+      name = name,
+      computer = True )
+
+    return p
+
+class Seeds_Decks(object):
+  """SEEDING for REUSE of deck objects"""
+  RULES = {
+      "suit_rules":[
+        (1,"bar","red"),(2,"fuz","blue"),(2,"dez","pink"), ],
+      "card_rules":[
+        (1,"fish",1),(2,"dog",1),(3,"cat",2),] }
+  
+  def seed_deck( self, rules=RULES, unique=False ):
+    return Deck( unique_cards=unique, deck_rules=rules )
+
+class Seeds_Card_Game_War(object):
+  """docstring for Seeds_Card_Game_War"""
+  PLAYER_LIST=['alex','pete']
+  def seed_a_card_game_of_war( self, player_list = PLAYER_LIST ):
+    # so far the game only should require a list of string values for player names
+    return Card_Game_War( players = player_list )

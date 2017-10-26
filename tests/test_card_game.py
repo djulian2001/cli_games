@@ -124,5 +124,5 @@ class Test_Card_Game(unittest.TestCase, Seeds_Card_Game):
     self.assertTrue( hasattr(wg,'check_win_condition'))
     # EXPAND THIS
 
-if __name__ == '__main__':
-  unittest.main()
+# if __name__ == '__main__':
+#   unittest.main()

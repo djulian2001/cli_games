@@ -61,5 +61,6 @@ class Test_Game(unittest.TestCase):
     self.assertTrue( hasattr( g, "exit_game" ) )
 
 
-if __name__=="__main__":
-  unittest.main()
+# if __name__=="__main__":
+#   # print("Tests Game Class:{n}".format( n=new_line ))
+#   unittest.main()
