@@ -1,4 +1,3 @@
-from app.player import Player
 from app.utilities import clear_screen
 import sys
 
@@ -46,10 +45,11 @@ class Game( object ):
   def set_players(self, players):
     """
       setter for the Game.players attribute
-      @players as a list of strings representing a name
+      @players as a list of Player objects
       returns list of people objects
     """
-    return [ Player( name=player ) for player in players ]
+    assert type( players ) is list
+    return players
 
   def set_total_teams(self):
     """Calculates the total teams and sets the class attribute total_teams """

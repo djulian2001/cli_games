@@ -21,11 +21,13 @@ class Test_Card_Game(unittest.TestCase, Seeds_Card_Game):
 
   def test_card_game_interface(self):
     self.assertTrue( issubclass( Card_Game, Game ) )
+    p1 = Player('Jack')
+    p2 = Player('Sara')
     cg = Card_Game(
       name="a_game",
       description="having fun with friends",
       card_game_rules={'stuff':'yo'},
-      players=['Jack','Sara'])
+      players=[p1,p2])
     g = Game(
       name="a_game",
       description="having fun with friends",

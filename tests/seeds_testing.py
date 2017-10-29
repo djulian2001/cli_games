@@ -16,10 +16,15 @@ class Seeds_Card_Game(object):
           "card_rules":[(1,"ace",1),(2,"king",1),(3,"queen",1)] 
         }, }, }
 
+    p1 = Player('Teddy')
+    p2 = Player('Ruxin')
+    
+    players_list= [ p1, p2 ]
+
     return Card_Game(
       name='adding',
       description='add players',
-      players=['Teddy','Ruxin'],
+      players=players_list,
       card_game_rules=cg_card_game_rules )
   
   def seed_a_default_dealt_card_game(self):
@@ -52,10 +57,15 @@ class Seeds_Card_Game(object):
           "card_rules":[(1,"ace",1),(2,"king",1),(3,"queen",1),(4,"jack",1),(5,"ten",1),(6,"nine",1),(7,"eight",1),(8,"seven",1),(9,"six",1),(10,"five",1),(11,"four",1),(12,"three",1),(13,"two",1)] 
         }, }, }
 
+    p1 = Player('max')
+    p2 = Player('brit')
+    p3 = Player('Rosco')
+    players_list= [p1,p2,p3]
+
     cg = Card_Game(
       name=cg_name,
       description=cg_description,
-      players=["max","brit","Rosco"],
+      players=players_list,
       card_game_rules=cg_card_game_rules )
 
     return cg
@@ -83,7 +93,8 @@ class Seeds_Decks(object):
 
 class Seeds_Card_Game_War(object):
   """docstring for Seeds_Card_Game_War"""
-  PLAYER_LIST=['alex','pete']
+  PLAYER_LIST = [ 'alex','pete' ]
   def seed_a_card_game_of_war( self, player_list = PLAYER_LIST ):
     # so far the game only should require a list of string values for player names
-    return Card_Game_War( players = player_list )
+    players_list = [ Player( name=player_name ) for player_name in player_list ]
+    return Card_Game_War( players = players_list )

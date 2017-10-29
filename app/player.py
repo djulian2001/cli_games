@@ -1,9 +1,11 @@
-# import random
 from app.utilities import pop_list_by_position
 
 class Player(object):
 
   def __init__(self,name,computer=False):
+    """Player object needed to validate types on init"""
+    assert type(name) is str
+    assert type(computer) is bool
     self.name = name
     self.hand = []
     self.computer = computer

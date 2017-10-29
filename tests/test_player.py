@@ -24,6 +24,22 @@ class Test_Player( unittest.TestCase, Seeds_Players ):
     self.assertIsInstance( p, Player )
     self.assertIs( type(p.hand), list )
 
+  def test_player_attribute_name(self):
+    with self.assertRaises( AssertionError ):
+      p = Player(name=1)
+    with self.assertRaises( AssertionError ):
+      p = Player(name=None)
+    with self.assertRaises( AssertionError ):
+      p = Player(name=True)
+
+  def test_player_attribute_computer(self):
+    with self.assertRaises( AssertionError ):
+      p = Player(name="1",computer=1)
+    with self.assertRaises( AssertionError ):
+      p = Player(name="None",computer=None)
+    with self.assertRaises( AssertionError ):
+      p = Player(name="True",computer="name")
+
   def test_player_method_add_list_of_objects_to_hand_default(self):
     p = self.seed_player(name="Bear")
     obj1 = [1,2,3]

@@ -1,4 +1,5 @@
 from app.card_game_war import Card_Game_War
+from app.player import Player
 from app.utilities import clear_screen
 # tdd
 
@@ -24,13 +25,15 @@ def main():
       war.exit_game()
 
   clear_screen()
-  player_names = []
+  player_list = []
   round_index = 0
 
   for i in range( Card_Game_War.total_players ):
-    player_names.append( input( "Enter player {player} name: ".format( player = i+1 ) ) )
+    in_name = input( "Enter player {player} name: ".format( player = i+1 ) ).capitalize()
+    computer = True if input( "Are you a computer {p} (y)?".format( p = in_name ) ).lower() in ['yes','y'] else False
+    player_list.append( Player( name = in_name, computer = computer ) )
   
-  war = Card_Game_War( player_names )
+  war = Card_Game_War( player_list )
   war.deal_cards()
   
   while war.win() == False:
